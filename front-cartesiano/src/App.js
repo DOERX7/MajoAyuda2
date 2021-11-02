@@ -6,6 +6,13 @@ import { initializeApp } from "firebase/app";
 import firebase from 'firebase/compat/app'
 import { getAnalytics } from "firebase/analytics";
 import { getDatabase,ref, set,onValue,get ,onChildChanged } from "firebase/database";
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
 
 function App() {
 
@@ -30,6 +37,7 @@ function App() {
   const [y2, setY2] = React.useState(0);
   const [alarma,setAlarma] = React.useState(false);
   const [backColor,setBackColor] = React.useState('white');
+  const [rows,setRows] = React.useState([]);
   
   const dataRef = ref(db, 'data/');
   const updateLocalData = () =>{
@@ -39,6 +47,10 @@ function App() {
       setX1(data.X1)
       setY1(data.Y1)
       setY2(data.Y2)
+      var r = rows
+      r.push(createData(data.X1,data.Y1,data.Y2,data.alarma))
+      setRows(r)
+      console.log(r)
       setAlarma(data.alarma)
       if(data.alarma){
         setBackColor('red')
@@ -47,6 +59,11 @@ function App() {
       }
     });
   }
+  function createData(x1, y1, y2, alarma) {
+    return { x1, y1, y2, alarma};
+  }
+  
+  
   useEffect(()=>{
     updateLocalData()
   })
@@ -79,8 +96,35 @@ function App() {
   return (
     <div className="App" style={{backgroundColor:backColor,marginLeft:'130px',marginRight:'130px',alignContent:"center"}}>
       <div className='header'>
-      <h1 className='title'>Scatter Chart</h1>
+      <h1 className='title'>Gráfica de sensores</h1>
       <Scatter data={data} options={options} />
+      <br/>
+      <div style={{height:'500px', maxHeight:'500px',overflow:'auto'}}>
+      <h1 className='title'>Historial de valores</h1>
+
+      <Table stickyHeader  aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell align="right">X1</TableCell>
+            <TableCell align="right">Y1</TableCell>
+            <TableCell align="right">Y2</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody style={{height:'500px', maxHeight:'500px'}}>
+          {rows.map((row,index) => {
+            console.log(row)
+            return(
+
+            <TableRow key={index}>
+              <TableCell align="right">{row.x1}</TableCell>
+              <TableCell align="right">{row.y1}</TableCell>
+              <TableCell align="right">{row.y2}</TableCell>
+            </TableRow>
+            )
+          })}
+        </TableBody>
+      </Table>
+      </div>
     </div>
 
     </div>

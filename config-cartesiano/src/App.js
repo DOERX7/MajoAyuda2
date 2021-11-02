@@ -289,6 +289,10 @@ function App() {
                     "alarma":false
                   })
                   setAlarma(false)
+                  setX1(0)
+                  setX2(0)
+                  setY1(0)
+                  setY2(0)
                 }}
                 >Reiniciar valores</Button>
 
